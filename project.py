@@ -1,142 +1,151 @@
-
 movies = {
     1: {"name": "Avengers", "price": 200, "seats": 50},
     2: {"name": "Spider-Man", "price": 180, "seats": 40},
     3: {"name": "Interstellar", "price": 150, "seats": 30}
 }
 
+# Store bookings during the current session
 bookings = {}
-bid = 1001
+booking_id = 1001
 
 
+# Display available movies
 def show_movies():
-    print("\nAvailable Movies")
+    print("\n----- AVAILABLE MOVIES -----")
 
-    for i in movies:
-        print(i, movies[i]["name"],
-              "Price:", movies[i]["price"],
-              "Seats:", movies[i]["seats"])
+    for key, movie in movies.items():
+        print(key, ".", movie["name"],
+              "| Price: Rs.", movie["price"],
+              "| Seats:", movie["seats"])
 
 
+# Book tickets
 def book_ticket():
-    global bid
+    global booking_id
 
     show_movies()
 
     try:
-        n = int(input("Select movie number: "))
+        choice = int(input("\nSelect movie number: "))
 
-        if n not in movies:
-            print("Wrong choice!")
+        if choice not in movies:
+            print("Invalid movie selection!")
             return
 
-        seats = int(input("Enter tickets: "))
+        movie = movies[choice]
+
+        seats = int(input("Enter number of tickets: "))
 
         if seats <= 0:
-            print("Invalid number of tickets!")
+            print("Enter a valid number of tickets!")
             return
 
-        if seats > movies[n]["seats"]:
-            print("Seats not available!")
+        if seats > movie["seats"]:
+            print("Not enough seats available!")
             return
 
-        name = input("Enter your name: ")
+        name = input("Enter your name: ").strip()
 
         if name == "":
-            print("Enter your name!")
+            print("Name cannot be empty!")
             return
 
-        total = seats * movies[n]["price"]
+        total = seats * movie["price"]
 
-        bookings[bid] = {
+        # Generate booking ID
+        current_id = str(booking_id)
+        booking_id += 1
+
+        # Store booking
+        booking = {
             "name": name,
-            "movie": movies[n]["name"],
+            "movie": movie["name"],
             "tickets": seats,
             "total": total
         }
 
-        movies[n]["seats"] -= seats
+        bookings[current_id] = booking
 
-        print("\nTicket booked!")
-        print("Booking ID:", bid)
+        # Update available seats
+        movie["seats"] -= seats
+
+        print("\n----- BOOKING CONFIRMED -----")
+        print("Booking ID:", current_id)
         print("Name:", name)
-        print("Movie:", movies[n]["name"])
+        print("Movie:", movie["name"])
         print("Tickets:", seats)
-        print("Amount: Rs.", total)
-
-        bid += 1
+        print("Total amount: Rs.", total)
 
     except ValueError:
-        print("Enter a valid number!")
+        print("Please enter a valid number!")
 
 
+# View booking
 def view_booking():
-    try:
-        n = int(input("Enter booking ID: "))
+    booking_id = input("\nEnter booking ID: ")
 
-        if n in bookings:
-            b = bookings[n]
+    if booking_id in bookings:
+        b = bookings[booking_id]
 
-            print("\nBooking Details")
-            print("Name:", b["name"])
-            print("Movie:", b["movie"])
-            print("Tickets:", b["tickets"])
-            print("Amount:", b["total"])
+        print("\n----- BOOKING DETAILS -----")
+        print("Booking ID:", booking_id)
+        print("Name:", b["name"])
+        print("Movie:", b["movie"])
+        print("Tickets:", b["tickets"])
+        print("Total amount: Rs.", b["total"])
 
-        else:
-            print("Booking not found!")
-
-    except ValueError:
-        print("Invalid booking ID!")
+    else:
+        print("Booking not found!")
 
 
+# Cancel booking
 def cancel_booking():
-    try:
-        n = int(input("Enter booking ID: "))
+    booking_id = input("\nEnter booking ID: ")
 
-        if n in bookings:
-            b = bookings[n]
+    if booking_id in bookings:
+        b = bookings[booking_id]
 
-            for i in movies:
-                if movies[i]["name"] == b["movie"]:
-                    movies[i]["seats"] += b["tickets"]
+        # Return seats to the movie
+        for movie in movies.values():
+            if movie["name"] == b["movie"]:
+                movie["seats"] += b["tickets"]
+                break
 
-            del bookings[n]
+        del bookings[booking_id]
 
-            print("Booking cancelled!")
+        print("Booking cancelled successfully!")
 
-        else:
-            print("Booking not found!")
-
-    except ValueError:
-        print("Invalid booking ID!")
+    else:
+        print("Booking not found!")
 
 
+# Main program
 while True:
-    print("\nMovie Ticket Booking")
+    print("\n===== MOVIE TICKET BOOKING =====")
     print("1. Show Movies")
     print("2. Book Tickets")
     print("3. View Booking")
     print("4. Cancel Booking")
     print("5. Exit")
 
-    ch = input("Enter your choice: ")
+    choice = input("\nEnter your choice: ")
 
-    if ch == "1":
+    if choice == "1":
         show_movies()
 
-    elif ch == "2":
+    elif choice == "2":
         book_ticket()
 
-    elif ch == "3":
+    elif choice == "3":
         view_booking()
 
-    elif ch == "4":
+    elif choice == "4":
         cancel_booking()
 
-    elif ch == "5":
-        print("Thank you!")
+    elif choice == "5":
+        print("\nThank you for using Movie Ticket Booking System!")
+        print("All session bookings have been cleared.")
         break
 
     else:
-        print("Wrong choice!")
+        print("Invalid choice! Please try again.")
