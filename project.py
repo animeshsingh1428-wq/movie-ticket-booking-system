@@ -3,9 +3,9 @@ print("     MOVIE TICKET BOOKING")
 print("================================")
 
 movies = {
-    1: ["Avengers", 200, 50],
+    1: ["K.G.F Chapter 2", 200, 50],
     2: ["Spider-Man", 180, 40],
-    3: ["Interstellar", 150, 30]
+    3: ["Dwaar", 150, 30]
 }
 
 bookings = []
